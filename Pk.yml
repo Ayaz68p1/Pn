@@ -1,0 +1,15 @@
+name: Setup Windows RDP
+
+on:
+  workflow_dispatch:  # دستی طور پر ورک فلو چلانے کے لیے
+
+jobs:
+  setup_rdp:
+    runs-on: self-hosted  # اپنے ونڈوز 10 مشین کو GitHub Runner کے طور پر استعمال کریں
+
+    steps:
+      # Step 1: Run RDP Configuration Script
+      - name: Configure RDP
+        run: |
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
