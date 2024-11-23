@@ -1,0 +1,26 @@
+name: RDP-Windows-10
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  setup-rdp:
+    runs-on: windows-latest
+
+    steps:
+    - name: Setup RDP Environment
+      run: |
+        # Install necessary RDP components
+        powershell -Command "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart"
+        powershell -Command "Install-WindowsFeature -Name Remote-Desktop-Services"
+        powershell -Command "Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0"
+
+        # Add Firewall Rule for RDP
+        powershell -Command "New-NetFirewallRule -DisplayName 'RDP' -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow"
+
+        # Output login credentials
+        echo "RDP setup complete. You can now connect using the machine's IP address and credentials."
+
+    - name: Confirm RDP Setup
+      run: |
+        powershell -Command "Test-NetConnection -ComputerName localhost -Port 3389"
